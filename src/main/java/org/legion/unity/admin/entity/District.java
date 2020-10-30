@@ -18,6 +18,21 @@ public class District {
     private Integer sort;
     private Integer status;
 
+    @Override
+    public String toString() {
+        return "District{" +
+                "id=" + id +
+                ", parentId=" + parentId +
+                ", name='" + name + '\'' +
+                ", shortName='" + shortName + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", level=" + level +
+                ", sort=" + sort +
+                ", status=" + status +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }
