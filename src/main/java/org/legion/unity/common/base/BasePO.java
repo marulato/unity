@@ -1,9 +1,11 @@
 package org.legion.unity.common.base;
 
 
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.Date;
 
+@MappedSuperclass
 public abstract class BasePO implements Serializable, Cloneable {
 
     private Date createdAt;

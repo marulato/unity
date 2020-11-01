@@ -1,6 +1,7 @@
 package org.legion.unity.common.base;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class SearchParam implements Serializable {
     private String order;
     private Integer draw;
     private Map<String, Object> params;
+    private Class<?> type;
 
     @Override
     public String toString() {
@@ -25,6 +27,21 @@ public class SearchParam implements Serializable {
                 '}';
     }
 
+    public String getOrderProperty() {
+        if (type != null) {
+            Field[] fields = type.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Order.class)) {
+                    Order order = field.getAnnotation(Order.class);
+                    if (order.value() == orderColumnNo) {
+                        return field.getName();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void addParam(String name, Object param) {
         if (params == null) {
             params = new HashMap<>();
@@ -32,12 +49,24 @@ public class SearchParam implements Serializable {
         params.put(name, param);
     }
 
+    public Object getParam(String property) {
+        if (params != null) {
+            return params.get(property);
+        }
+        return null;
+    }
+
     public Integer getPageNo() {
         return pageNo;
     }
 
     public void setPageNo(Integer pageNo) {
-        this.pageNo = pageNo;
+        if (pageNo >= 0) {
+            this.pageNo = pageNo;
+            if (pageNo == 1) {
+                this.pageNo = 0;
+            }
+        }
     }
 
     public Integer getPageSize() {
@@ -78,5 +107,13 @@ public class SearchParam implements Serializable {
 
     public void setDraw(Integer draw) {
         this.draw = draw;
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
+
+    public void setType(Class<?> type) {
+        this.type = type;
     }
 }

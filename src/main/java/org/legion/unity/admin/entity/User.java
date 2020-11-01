@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 import java.util.Date;
 
 @Entity
-@Table(name = "RBAC_USER")
+@Table(name = "USR_USER")
 public class User extends BasePO {
 
     @Id
