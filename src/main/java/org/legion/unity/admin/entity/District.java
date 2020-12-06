@@ -1,13 +1,12 @@
 package org.legion.unity.admin.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.legion.unity.common.jpa.annotation.Entity;
+import org.legion.unity.common.jpa.annotation.PrimaryKey;
 
-@Entity
-@Table(name = "MC_DISTRICT")
+@Entity(tableName = "MC_DISTRICT")
 public class District {
-    @Id
+
+    @PrimaryKey(autoIncrement = false)
     private Integer id;
     private Integer parentId;
     private String name;

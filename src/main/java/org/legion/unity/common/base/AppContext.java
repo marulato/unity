@@ -1,24 +1,21 @@
 package org.legion.unity.common.base;
 
-
 import org.legion.unity.admin.entity.UserRole;
+import org.legion.unity.common.utils.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.List;
 
 public class AppContext implements Serializable {
 
-    private Long userId;
-    private String loginId;
+    private String userId;
     private String domain;
     private String name;
     private boolean isAdminRole;
-    private boolean hasAdminRole;
     private boolean loggedIn;
-    private UserRole currentRole;
-    private List<UserRole> allRoles;
+    private UserRole role;
+    private String sessionId;
 
     public static final String APP_CONTEXT_KEY = "Legion_Web_Session_Context";
     private static final ThreadLocal<AppContext> localContext = new ThreadLocal<>();
@@ -40,8 +37,14 @@ public class AppContext implements Serializable {
         return null;
     }
 
-    public String getRoleId() {
-        return currentRole.getId();
+    public static AppContext createVirtualContext(String virtualId, boolean isLoggedIn, HttpServletRequest request) {
+        AppContext context = new AppContext();
+        context.setUserId(StringUtils.isNotBlank(virtualId) ? virtualId : "PublicIndex");
+        context.setDomain("internet");
+        context.setSessionId(request.getSession().getId());
+        context.setLoggedIn(isLoggedIn);
+        request.getSession().setAttribute(APP_CONTEXT_KEY, context);
+        return context;
     }
 
     public void setAppContext() {
@@ -64,20 +67,12 @@ public class AppContext implements Serializable {
         return localContext.get();
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
     }
 
     public String getDomain() {
@@ -104,10 +99,6 @@ public class AppContext implements Serializable {
         isAdminRole = adminRole;
     }
 
-    public boolean isHasAdminRole() {
-        return hasAdminRole;
-    }
-
     public boolean isLoggedIn() {
         return loggedIn;
     }
@@ -116,23 +107,19 @@ public class AppContext implements Serializable {
         this.loggedIn = loggedIn;
     }
 
-    public void setHasAdminRole(boolean hasAdminRole) {
-        this.hasAdminRole = hasAdminRole;
+    public UserRole getRole() {
+        return role;
     }
 
-    public UserRole getCurrentRole() {
-        return currentRole;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
-    public void setCurrentRole(UserRole currentRole) {
-        this.currentRole = currentRole;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public List<UserRole> getAllRoles() {
-        return allRoles;
-    }
-
-    public void setAllRoles(List<UserRole> allRoles) {
-        this.allRoles = allRoles;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

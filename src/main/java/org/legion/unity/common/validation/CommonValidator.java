@@ -77,7 +77,7 @@ public class CommonValidator {
     private static void validateWithMethod(Field field, ValidateWithMethod validateWithMethod,
                                            String profile, final Object instance, final List<ConstraintViolation> violations) throws Exception {
         if (isProfileMatch(profile, validateWithMethod.profile())) {
-            Object value = Reflections.getValue(field, instance.getClass(), instance);
+            Object value = Reflections.getValue(field, instance);
             String methodName = validateWithMethod.methodName();
             String[] parameters = validateWithMethod.parameters();
             Class<?> methodInType = validateWithMethod.type();
@@ -111,7 +111,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             NotNull notNull = field.getAnnotation(NotNull.class);
             if (isProfileMatch(constraintField.getInputProfile(), notNull.profile())) {
-                if (Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo()) == null) {
+                if (Reflections.getValue(field, constraintField.getInstanceBelongsTo()) == null) {
                     violations.add(new ConstraintViolation(field.getName(), null,
                             notNull.message(), notNull.profile(), NotNull.class));
                 }
@@ -125,7 +125,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             NotEmpty notEmpty = field.getAnnotation(NotEmpty.class);
             if (isProfileMatch(constraintField.getInputProfile(), notEmpty.profile())) {
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (value == null || StringUtils.isEmpty(String.valueOf(value))) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             notEmpty.message(), notEmpty.profile(), NotNull.class));
@@ -140,7 +140,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             NotBlank notBlank = field.getAnnotation(NotBlank.class);
             if (isProfileMatch(constraintField.getInputProfile(), notBlank.profile())) {
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (value == null || StringUtils.isBlank(String.valueOf(value))) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             notBlank.message(), notBlank.profile(), NotBlank.class));
@@ -156,7 +156,7 @@ public class CommonValidator {
             MemberOf memberOf = field.getAnnotation(MemberOf.class);
             if (isProfileMatch(constraintField.getInputProfile(), memberOf.profile())) {
                 List<String> members = List.of(memberOf.value());
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (!(value instanceof String) || !members.contains(String.valueOf(value))) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             memberOf.message(), memberOf.profile(), MemberOf.class));
@@ -172,7 +172,7 @@ public class CommonValidator {
             NotMemberOf notMemberOf = field.getAnnotation(NotMemberOf.class);
             if (isProfileMatch(constraintField.getInputProfile(), notMemberOf.profile())) {
                 List<String> members = List.of(notMemberOf.value());
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (!(value instanceof String) || members.contains(String.valueOf(value))) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             notMemberOf.message(), notMemberOf.profile(), NotMemberOf.class));
@@ -188,7 +188,7 @@ public class CommonValidator {
             MatchesPattern matchesPattern = field.getAnnotation(MatchesPattern.class);
             if (isProfileMatch(constraintField.getInputProfile(), matchesPattern.profile())) {
                 Pattern pattern = Pattern.compile(matchesPattern.pattern());
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (!(value instanceof String) || !pattern.matcher(String.valueOf(value)).matches()) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             matchesPattern.message(), matchesPattern.profile(), MatchesPattern.class));
@@ -203,7 +203,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             Length length = field.getAnnotation(Length.class);
             if (isProfileMatch(constraintField.getInputProfile(), length.profile())) {
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (value == null && length.min() == 0) {
                     return;
                 }
@@ -222,7 +222,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             Email email = field.getAnnotation(Email.class);
             if (isProfileMatch(constraintField.getInputProfile(), email.profile())) {
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (!(value instanceof String) || !ValidationUtils.isValidEmail((String) value)) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             email.message(), email.profile(), Email.class));
@@ -237,7 +237,7 @@ public class CommonValidator {
             Field field = constraintField.getField();
             Date date = field.getAnnotation(Date.class);
             if (isProfileMatch(constraintField.getInputProfile(), date.profile())) {
-                Object value = Reflections.getValue(field, constraintField.getInstanceType(), constraintField.getInstanceBelongsTo());
+                Object value = Reflections.getValue(field, constraintField.getInstanceBelongsTo());
                 if (!(value instanceof String) || DateUtils.parseDatetime((String) value, date.pattern()) == null) {
                     violations.add(new ConstraintViolation(field.getName(), value,
                             date.message(), date.profile(), Date.class));

@@ -1,14 +1,19 @@
 package org.legion.unity.admin.dao;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.legion.unity.admin.entity.Config;
-import org.legion.unity.admin.pk.ConfigPK;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ConfigDAO extends CrudRepository<Config, ConfigPK>, JpaSpecificationExecutor<Config> {
+import java.util.List;
 
+@Repository
+@Mapper
+public interface ConfigDAO  {
+
+    @Select("SELECT * FROM SYS_CONFIG ORDER BY CONFIG_KEY")
+    List<Config> findAll();
+
+    @Select("SELECT * FROM SYS_CONFIG WHERE CONFIG_KEY = #{configKey}")
     Config findByConfigKey(String configKey);
 }

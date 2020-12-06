@@ -27,7 +27,7 @@
       <form id="mainForm"  method="post">
         <input type="hidden" name="browser" id="browser">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="loginId" id="loginId" placeholder="username">
+          <input type="text" class="form-control" name="id" id="id" placeholder="username">
           <div class="input-group-append" name="loginId_append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -42,7 +42,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+<!--        <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
               <input type="checkbox" id="remember">
@@ -51,9 +51,9 @@
               </label>
             </div>
           </div>
-          <!-- /.col -->
-          <!-- /.col -->
-        </div>
+          &lt;!&ndash; /.col &ndash;&gt;
+          &lt;!&ndash; /.col &ndash;&gt;
+        </div>-->
         <div class="row">
           <div class="col-12">
             <button type="button" class="btn btn-primary btn-block" onclick="login()">登录</button>
@@ -111,7 +111,7 @@
         showWaiting();
         $("#browser").val(navigator.userAgent);
         $.ajax({
-            url: "/web/login",
+            url: "/ueo/login",
             type: "post",
             data: $("#mainForm").serialize(),
             dataType: "json",
@@ -122,9 +122,9 @@
                 var obj = res.data;
                 if (res.status === 200) {
                     if (obj[0] === 0 && obj[1] == null) {
-                        land(1);
+                        //TODO
                     } else if (obj[1] === "FirstLogin") {
-                        location.href = "/web/login/changePassword";
+                        location.href = "/ueo/login/changePassword";
                     }
                 } else if(res.status === 221) {
                     aegis.showErrors(obj);
@@ -136,13 +136,6 @@
         });
     }
 
-    function land(roleId) {
-        var role = "";
-        if (roleId !== 1) {
-            role = roleId;
-        }
-        location.href = "/web/login/landing/" + roleId;
-    }
 </script>
 </body>
 </html>

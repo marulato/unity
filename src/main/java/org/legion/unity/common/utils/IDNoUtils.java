@@ -24,7 +24,7 @@ public class IDNoUtils {
                 return false;
             }
             DistrictDAO districtDAO = SpringUtils.getBean(DistrictDAO.class);
-            District district = districtDAO.findById(Integer.parseInt(areaCode)).orElse(null);
+            District district = districtDAO.findById(Integer.parseInt(areaCode));
             if (district == null) {
                 return false;
             }

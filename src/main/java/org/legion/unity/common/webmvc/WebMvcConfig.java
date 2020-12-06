@@ -12,7 +12,6 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-
     private final GlobalInterceptor globalInterceptor;
 
     @Autowired
@@ -30,7 +29,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 excludeList.add(pattern.trim());
             }
         }
-        registry.addInterceptor(globalInterceptor).addPathPatterns("/web/**").excludePathPatterns(excludeList);
+        registry.addInterceptor(globalInterceptor).addPathPatterns("/ueo/**").excludePathPatterns(excludeList);
     }
 
 }

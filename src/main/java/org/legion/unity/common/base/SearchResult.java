@@ -1,6 +1,5 @@
 package org.legion.unity.common.base;
 
-import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,21 +15,7 @@ public class  SearchResult <E> implements Serializable {
         resultList = new ArrayList<>();
     }
 
-    public SearchResult(List<E> resultList, SearchParam param) {
-        this.resultList = new ArrayList<>();
-        if (resultList != null) {
-            this.resultList.addAll(resultList);
-            draw = param.getDraw();
-        }
-    }
 
-    public SearchResult(Page<E> page, SearchParam param) {
-        if (page != null && param != null) {
-            resultList = page.getContent();
-            totalCounts = (int) page.getTotalElements();
-            draw = param.getDraw();
-        }
-    }
 
     public SearchResult(SearchParam param) {
         if (param != null) {

@@ -35,7 +35,7 @@ public class XMLUtils {
             Class<?> type = entity.getClass();
             for (Element node : nodes) {
                 Field field = type.getDeclaredField(node.getName());
-                Reflections.setValue(field, type, entity, node.getText().trim());
+                Reflections.setValue(field, entity, node.getText().trim());
             }
         }
     }

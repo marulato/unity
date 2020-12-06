@@ -6,7 +6,7 @@ import java.lang.reflect.Modifier;
 
 public class Reflections {
 
-    public static Object getValue(Field field, Class<?> objClass, Object instance) throws Exception {
+    public static Object getValue(Field field, Object instance) throws Exception {
         String getter = "get";
         Object value;
         field.setAccessible(true);
@@ -14,7 +14,7 @@ public class Reflections {
             getter = "is";
         }
         getter += StringUtils.capitalCharacter(field.getName(), 0);
-        Method getterMethod = objClass.getDeclaredMethod(getter);
+        Method getterMethod = instance.getClass().getDeclaredMethod(getter);
         int modifier = getterMethod.getModifiers();
         if (Modifier.isPublic(modifier) && !Modifier.isAbstract(modifier)
                 && !Modifier.isStatic(modifier) && getterMethod.getReturnType() == field.getType()) {
@@ -26,11 +26,11 @@ public class Reflections {
         return value;
     }
 
-    public static void setValue(Field field, Class<?> objClass, Object instance, Object value) throws Exception {
+    public static void setValue(Field field, Object instance, Object value) throws Exception {
         String setter = "set";
         field.setAccessible(true);
         setter += StringUtils.capitalCharacter(field.getName(), 0);
-        Method setterMethod = objClass.getDeclaredMethod(setter, field.getType());
+        Method setterMethod = instance.getClass().getDeclaredMethod(setter, field.getType());
         int modifier = setterMethod.getModifiers();
         if (Modifier.isPublic(modifier) && !Modifier.isAbstract(modifier)
                 && !Modifier.isStatic(modifier)) {

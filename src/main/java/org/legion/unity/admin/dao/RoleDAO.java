@@ -2,13 +2,13 @@ package org.legion.unity.admin.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.legion.unity.admin.entity.User;
+import org.legion.unity.admin.entity.UserRole;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
-public interface UserDAO {
+public interface RoleDAO {
 
-    @Select("SELECT * FROM USR_USER WHERE ID = #{id}")
-    User findById(String id);
+    @Select("SELECT * FROM USR_ROLE WHERE ID = #{id}")
+    UserRole findById(String id);
 }

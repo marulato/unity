@@ -17,4 +17,11 @@ public class AppConst {
     public static final int RESPONSE_INVALID = 221;
     public static final int RESPONSE_ERROR = 500;
 
+    public static final String ACCOUNT_STATUS_ACTIVE    = "A";
+    public static final String ACCOUNT_STATUS_INACTIVE  = "I";
+    public static final String ACCOUNT_STATUS_EXPIRED   = "E";
+    public static final String ACCOUNT_STATUS_VOIDED    = "V";
+    public static final String ACCOUNT_STATUS_LOCKED    = "L";
+    public static final String ACCOUNT_STATUS_FROZEN    = "F";
+
 }

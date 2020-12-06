@@ -1,21 +1,16 @@
 package org.legion.unity.admin.entity;
 
-
 import org.legion.unity.common.base.BasePO;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import org.legion.unity.common.jpa.annotation.Entity;
+import org.legion.unity.common.jpa.annotation.PrimaryKey;
 
-@Entity
-@Table(name = "UserRoleAssign")
+@Entity(tableName = "USR_ROLE_ASSIGN")
 public class UserRoleAssign extends BasePO {
-    @Id
+
+    @PrimaryKey(autoIncrement = true)
     private Long id;
     private String userId;
     private String roleId;
-    private Date activatedAt;
-    private Date deactivatedAt;
     private String approvedBy;
     private String remarks;
 
@@ -41,22 +36,6 @@ public class UserRoleAssign extends BasePO {
 
     public void setRoleId(String roleId) {
         this.roleId = roleId;
-    }
-
-    public Date getActivatedAt() {
-        return activatedAt;
-    }
-
-    public void setActivatedAt(Date activatedAt) {
-        this.activatedAt = activatedAt;
-    }
-
-    public Date getDeactivatedAt() {
-        return deactivatedAt;
-    }
-
-    public void setDeactivatedAt(Date deactivatedAt) {
-        this.deactivatedAt = deactivatedAt;
     }
 
     public String getApprovedBy() {

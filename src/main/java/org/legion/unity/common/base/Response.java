@@ -3,14 +3,14 @@ package org.legion.unity.common.base;
 import java.io.Serializable;
 import java.util.Date;
 
-public class AjaxResponseBody implements Serializable {
+public class Response implements Serializable {
 
     private int status;
     private Object data;
     private Date requestAt;
     private Date respondAt;
 
-    AjaxResponseBody(){
+    Response() {
         requestAt = new Date();
     }
 

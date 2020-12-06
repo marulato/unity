@@ -1,16 +1,13 @@
 package org.legion.unity.admin.entity;
 
-
 import org.legion.unity.common.base.BasePO;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.legion.unity.common.jpa.annotation.Entity;
+import org.legion.unity.common.jpa.annotation.PrimaryKey;
 
-@Entity
-@Table(name = "RBAC_ROLE")
+@Entity(tableName = "USR_ROLE")
 public class UserRole extends BasePO {
 
-    @Id
+    @PrimaryKey(autoIncrement = false)
     private String id;
     private String name;
     private String type;

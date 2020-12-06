@@ -15,7 +15,8 @@ public class BaseVO implements Serializable {
     private String updatedAt;
     private String updatedBy;
 
-    public BaseVO() {}
+    public BaseVO() {
+    }
 
     public BaseVO(BasePO po) {
         if (po != null) {
@@ -27,7 +28,7 @@ public class BaseVO implements Serializable {
             for (Field poField : poFields) {
                 try {
                     Field voField = voClass.getDeclaredField(poField.getName());
-                    Reflections.setValue(voField, voClass, this, Reflections.getValue(poField, poClass, po));
+                    Reflections.setValue(voField, this, Reflections.getValue(poField, po));
                 } catch (Exception ignored) {
 
                 }
@@ -37,10 +38,10 @@ public class BaseVO implements Serializable {
                 try {
                     Field voAuditField = baseVOClass.getDeclaredField(auditField.getName());
                     if (auditField.getType() == Date.class) {
-                        Reflections.setValue(voAuditField, baseVOClass, this,
-                                DateUtils.getDateString((Date) Reflections.getValue(auditField, basePOClass, po), "yyyy/MM/dd"));
+                        Reflections.setValue(voAuditField, this,
+                                DateUtils.getDateString((Date) Reflections.getValue(auditField, po), "yyyy/MM/dd"));
                     } else {
-                        Reflections.setValue(voAuditField, baseVOClass, this, Reflections.getValue(auditField, basePOClass, po));
+                        Reflections.setValue(voAuditField, this, Reflections.getValue(auditField, po));
                     }
                 } catch (Exception ignored) {
 

@@ -1,12 +1,14 @@
 package org.legion.unity.admin.dao;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.legion.unity.admin.entity.District;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DistrictDAO extends CrudRepository<District, Integer>, JpaSpecificationExecutor<District> {
+@Mapper
+public interface DistrictDAO  {
 
-
+    @Select("SELECT * FROM MC_DISTRICT WHERE ID = #{id}")
+    District findById(Integer id);
 }

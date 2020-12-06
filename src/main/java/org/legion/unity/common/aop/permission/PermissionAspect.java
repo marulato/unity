@@ -7,6 +7,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.legion.unity.common.base.AppContext;
 import org.legion.unity.common.ex.PermissionDeniedException;
 import org.legion.unity.admin.entity.UserRole;
+import org.legion.unity.common.utils.Redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -31,21 +32,19 @@ public class PermissionAspect {
         Logical logical = requiresRoles.logical();
         AppContext context = AppContext.getFromWebThread();
         if (context != null && context.isLoggedIn()) {
-            log.info("Checking User -> " + context.getLoginId() + " has roles in " + roleIds);
+            log.info("Checking User -> " + context.getUserId() + " has roles in " + roleIds);
             List<String> allRoles = new ArrayList<>();
-            for (UserRole role : context.getAllRoles()) {
-                allRoles.add(role.getId());
-            }
+            allRoles.add(context.getRole().getId());
             if (logical == Logical.AND) {
                 if (!allRoles.containsAll(roleIds)) {
                     hasPermission = false;
                 }
             } else if (logical == Logical.OR) {
-                if (!roleIds.contains(context.getCurrentRole().getId())) {
+                if (!roleIds.contains(context.getRole().getId())) {
                     hasPermission = false;
                 }
             } else if(logical == Logical.NONE) {
-                if (roleIds.contains(context.getCurrentRole().getId())) {
+                if (roleIds.contains(context.getRole().getId())) {
                     hasPermission = false;
                 }
             }
@@ -73,4 +72,5 @@ public class PermissionAspect {
             return joinPoint.proceed();
         }
     }
+
 }

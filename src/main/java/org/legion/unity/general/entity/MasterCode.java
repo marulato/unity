@@ -1,15 +1,10 @@
 package org.legion.unity.general.entity;
 
 import org.legion.unity.common.base.BasePO;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "CM_MASTER_CODE")
 public class MasterCode extends BasePO {
 
-    @Id
+
     private Integer id;
     private String type;
     private String code;

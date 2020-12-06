@@ -27,20 +27,6 @@ public class SearchParam implements Serializable {
                 '}';
     }
 
-    public String getOrderProperty() {
-        if (type != null) {
-            Field[] fields = type.getDeclaredFields();
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Order.class)) {
-                    Order order = field.getAnnotation(Order.class);
-                    if (order.value() == orderColumnNo) {
-                        return field.getName();
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     public void addParam(String name, Object param) {
         if (params == null) {

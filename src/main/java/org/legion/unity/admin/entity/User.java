@@ -1,18 +1,15 @@
 package org.legion.unity.admin.entity;
 
-
 import org.legion.unity.common.base.BasePO;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import org.legion.unity.common.jpa.annotation.Entity;
+import org.legion.unity.common.jpa.annotation.NotColumn;
+import org.legion.unity.common.jpa.annotation.PrimaryKey;
 import java.util.Date;
 
-@Entity
-@Table(name = "USR_USER")
+@Entity(tableName = "USR_USER")
 public class User extends BasePO {
 
-    @Id
+    @PrimaryKey(autoIncrement = false)
     private String id;
     private String domain;
     private String name;
@@ -30,7 +27,7 @@ public class User extends BasePO {
     private Date activatedAt;
     private Date deactivatedAt;
 
-    @Transient
+    @NotColumn
     private String originalPwd;
 
     public String getId() {

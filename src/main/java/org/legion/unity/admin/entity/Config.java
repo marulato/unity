@@ -1,19 +1,16 @@
 package org.legion.unity.admin.entity;
 
 
-import org.legion.unity.admin.pk.ConfigPK;
 import org.legion.unity.common.base.BasePO;
+import org.legion.unity.common.jpa.annotation.Entity;
+import org.legion.unity.common.jpa.annotation.PrimaryKey;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "SYS_CONFIG")
-@IdClass(ConfigPK.class)
+@Entity(tableName = "SYS_CONFIG")
 public class Config extends BasePO {
 
-    @Id
+    @PrimaryKey(autoIncrement = false)
     private String configKey;
-    @Id
+    @PrimaryKey(autoIncrement = false)
     private String configValue;
     private String type;
     private String profile;

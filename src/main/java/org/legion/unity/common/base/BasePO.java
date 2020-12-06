@@ -1,11 +1,9 @@
 package org.legion.unity.common.base;
 
-
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.Date;
 
-@MappedSuperclass
+
 public abstract class BasePO implements Serializable, Cloneable {
 
     private Date createdAt;
@@ -21,8 +19,8 @@ public abstract class BasePO implements Serializable, Cloneable {
     public final void createAuditValues(AppContext context) {
         if (context != null) {
             Date now = new Date();
-            setCreatedBy(context.getLoginId());
-            setUpdatedBy(context.getLoginId());
+            setCreatedBy(context.getUserId());
+            setUpdatedBy(context.getUserId());
             setCreatedAt(now);
             setUpdatedAt(now);
         }
@@ -31,7 +29,7 @@ public abstract class BasePO implements Serializable, Cloneable {
     public final void updateAuditValues(AppContext context) {
         if (context != null) {
             Date now = new Date();
-            setUpdatedBy(context.getLoginId());
+            setUpdatedBy(context.getUserId());
             setUpdatedAt(now);
         }
     }
