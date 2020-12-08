@@ -31,7 +31,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
                 response.sendRedirect("/SessionExpired");
                 log.info("User Session Duplicated -> " + ((AppContext) context).getUserId());
             } else {
-                response.sendRedirect("/login");
+                response.sendRedirect("/ea/login");
             }
         } else {
             if (!StringUtils.parseBoolean(ConfigUtils.get("server.appContext.enabled"))) {
@@ -41,7 +41,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
                 appContext.setAppContext(request);
                 return true;
             } else {
-                response.sendRedirect("/login");
+                response.sendRedirect("/ea/login");
                 log.warn("Intercepted request: " + request.getRequestURL());
             }
         }

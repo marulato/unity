@@ -1,5 +1,8 @@
 package org.legion.unity.admin.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.legion.unity.admin.entity.LoginStatus;
 import org.legion.unity.admin.entity.User;
 import org.legion.unity.admin.service.PortalLoginService;
@@ -38,21 +41,19 @@ public class PortalLoginController {
         this.loginService = loginService;
     }
 
-    /**
-     * Web View Call
-     * @return Login page
-     */
-    @GetMapping("/ueo/login")
+
+    @GetMapping("/ea/login")
     public String getLoginPage() {
         log.info(LogUtils.around("Enter login page"));
         return "admin/login";
     }
 
-    /**
-     * Ajax Call
-     * @return login validation result
-     */
-    @PostMapping("/ueo/login")
+    @ApiOperation(value = "登录验证", protocols = "http", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户名"),
+            @ApiImplicitParam(name = "password", value = "密码")
+    })
+    @PostMapping("/ea/login")
     @ResponseBody
     public Response login(User webUser, HttpServletRequest request) throws Exception {
         Responder responder = Responder.ready();

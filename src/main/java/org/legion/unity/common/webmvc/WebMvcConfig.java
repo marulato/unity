@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final GlobalInterceptor globalInterceptor;
@@ -29,7 +28,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 excludeList.add(pattern.trim());
             }
         }
-        registry.addInterceptor(globalInterceptor).addPathPatterns("/ueo/**").excludePathPatterns(excludeList);
+        excludeList.add("/dist/**");
+        excludeList.add("/plugins/**");
+        excludeList.add("/build/**");
+        excludeList.add("/js/**");
+        excludeList.add("/css/**");
+        registry.addInterceptor(globalInterceptor).addPathPatterns("/**").excludePathPatterns(excludeList);
     }
 
 }

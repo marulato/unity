@@ -4,16 +4,20 @@ import org.legion.unity.common.base.BasePO;
 import org.legion.unity.common.jpa.annotation.Entity;
 import org.legion.unity.common.jpa.annotation.NotColumn;
 import org.legion.unity.common.jpa.annotation.PrimaryKey;
+import org.legion.unity.common.validation.NotBlank;
+
 import java.util.Date;
 
 @Entity(tableName = "USR_USER")
 public class User extends BasePO {
 
     @PrimaryKey(autoIncrement = false)
+    @NotBlank(message = "mandatory")
     private String id;
     private String domain;
     private String name;
     private String displayName;
+    @NotBlank(message = "mandatory")
     private String password;
     private String email;
     private String phoneNo;

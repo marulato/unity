@@ -10,8 +10,14 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.legion.unity.common.utils.StringUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 
 public abstract class PdfTemplateGenerator implements IDocGenerator {
@@ -91,30 +97,45 @@ public abstract class PdfTemplateGenerator implements IDocGenerator {
         };
     }
 
+    public byte[] generate(String templateName, Map<String, Object> params) throws Exception {
+        TemplateEngine templateEngine = new TemplateEngine();
+        ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+        Context context = new Context();
+        context.setVariables(params);
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setPrefix("templates/");
+        resolver.setSuffix(".html");
+        resolver.setTemplateMode(TemplateMode.HTML);
+        templateEngine.setTemplateResolver(resolver);
+        String htmlString = templateEngine.process(templateName, context);
+        return generatePdf(htmlString.getBytes(StandardCharsets.UTF_8));
+    }
+
 
     @Override
     public byte[] generate() throws Exception {
-        String templatePath = this.getClass().getResource("/").getPath();
+/*        String templatePath = this.getClass().getResource("/").getPath();
         templatePath = templatePath.substring(1).replaceAll("%20", " ") + "documents/";
-        String ftl = getTemplate();
+        String thymeleafPath = getTemplate();
         String fileName = getTemplate();
-        if (ftl.contains("/")) {
-            fileName = ftl.substring(ftl.lastIndexOf("/") + 1);
-            templatePath += ftl.substring(0, ftl.lastIndexOf("/"));
+        if (thymeleafPath.contains("/")) {
+            fileName = thymeleafPath.substring(thymeleafPath.lastIndexOf("/") + 1);
+            templatePath += thymeleafPath.substring(0, thymeleafPath.lastIndexOf("/"));
         }
         if ("\\".equals(File.separator)) {
             templatePath = templatePath.replaceAll("/", "\\\\");
         }
         if (!templatePath.startsWith(File.separator)) {
             templatePath = File.separator + templatePath;
-        }
-        Configuration config = new Configuration(Configuration.VERSION_2_3_30);
+        }*/
+        return generate(getTemplate(), getParameters());
+
+/*        Configuration config = new Configuration(Configuration.VERSION_2_3_30);
         config.setDirectoryForTemplateLoading(new File(templatePath));
         Template template = config.getTemplate(fileName, "UTF-8");
         StringWriter writer = new StringWriter();
         template.process(getParameters(), writer);
-        writer.close();
-        return generatePdf(writer.toString().getBytes(StandardCharsets.UTF_8));
+        writer.close();*/
     }
 
     public Rectangle getPageSize() {
