@@ -1,5 +1,12 @@
 package org.legion.unity.admin.service;
 
+import com.auth0.jwt.algorithms.Algorithm;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.codec.cli.Digest;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.net.util.Base64;
 import org.legion.unity.admin.entity.*;
 import org.legion.unity.common.base.AppContext;
 import org.legion.unity.common.base.SessionManager;
@@ -11,7 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class PortalLoginService {
@@ -139,6 +150,24 @@ public class PortalLoginService {
         if (context != null) {
             Redis.delete(context.getUserId());
         }
+    }
+
+    public String generateToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userid", user.getId());
+        claims.put("name", user.getName());
+        claims.put("email", user.getEmail());
+        Date now = new Date();
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .setClaims(claims)
+                .setId(UUID.randomUUID().toString())
+                .setIssuedAt(now)
+                .setSubject(user.getName())
+                .setIssuer("UNITY c.n.o")
+                .setExpiration(DateUtils.addMinutes(now, 60))
+                .signWith(SignatureAlgorithm.HS512,
+                        Base64.encodeBase64String(ConfigUtils.get("security.jwt.secretKey").getBytes(StandardCharsets.UTF_8)));
+        return jwtBuilder.compact();
     }
 
 

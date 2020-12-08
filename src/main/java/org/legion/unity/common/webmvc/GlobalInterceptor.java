@@ -20,31 +20,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        Object context = session.getAttribute(AppContext.APP_CONTEXT_KEY);
-        if (context instanceof AppContext) {
-            AppContext existContext = Redis.getJsonObject(((AppContext) context).getUserId(), AppContext.class);
-            if (existContext != null && existContext.getSessionId().equals(((AppContext) context).getSessionId())) {
-                return true;
-            } else if (existContext != null) {
-                request.getSession().invalidate();
-                response.sendRedirect("/SessionExpired");
-                log.info("User Session Duplicated -> " + ((AppContext) context).getUserId());
-            } else {
-                response.sendRedirect("/ea/login");
-            }
-        } else {
-            if (!StringUtils.parseBoolean(ConfigUtils.get("server.appContext.enabled"))) {
-                AppContext appContext = new AppContext();
-                appContext.setUserId("DEV_VIRTUAL_ID");
-                appContext.setLoggedIn(true);
-                appContext.setAppContext(request);
-                return true;
-            } else {
-                response.sendRedirect("/ea/login");
-                log.warn("Intercepted request: " + request.getRequestURL());
-            }
-        }
+
         return false;
     }
 

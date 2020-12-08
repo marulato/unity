@@ -66,7 +66,6 @@ public class PortalLoginController {
                 AppContext context = AppContext.getAppContext(request);
                 context.setLoggedIn(true);
                 context.setSessionId(request.getSession().getId());
-                loginService.checkInSession(request);
                 responder.addDataObject(0);
                 if (AppConst.YES.equals(webUser.getIsFirstLogin())) {
                     responder.addDataObject("FirstLogin");
