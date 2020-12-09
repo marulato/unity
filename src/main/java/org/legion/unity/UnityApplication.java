@@ -10,7 +10,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @SpringBootApplication
 @EnableOpenApi
-@EnableRedisHttpSession
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 3600)
 public class UnityApplication {
 
     public static void main(String[] args) {

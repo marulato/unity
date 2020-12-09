@@ -1,12 +1,7 @@
 package org.legion.unity.admin.service;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.commons.codec.cli.Digest;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.net.util.Base64;
 import org.legion.unity.admin.entity.*;
 import org.legion.unity.common.base.AppContext;
 import org.legion.unity.common.base.SessionManager;
@@ -18,11 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class PortalLoginService {
@@ -36,10 +27,10 @@ public class PortalLoginService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LoginStatus login(User webUser, HttpServletRequest request) {
+    public LoginStatus login(String username, String inputPwd, HttpServletRequest request) {
         LoginStatus status = null;
-        if (webUser != null) {
-            User user = userService.getUserByLoginId(webUser.getId());
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(inputPwd)) {
+            User user = userService.getUserByLoginId(username);
             if (user != null) {
                 AppContext appContext = new AppContext();
                 appContext.setUserId(user.getId());
@@ -47,7 +38,7 @@ public class PortalLoginService {
                 appContext.setAppContext(request);
                 String accountStatus = checkStatus(user);
                 if (AppConst.ACCOUNT_STATUS_ACTIVE.equals(accountStatus)) {
-                    boolean isPwdMatch = userService.isPasswordMatch(webUser.getPassword(), user.getPassword());
+                    boolean isPwdMatch = userService.isPasswordMatch(inputPwd, user.getPassword());
                     if (isPwdMatch) {
                         status = LoginStatus.SUCCESS;
                         UserRoleAssign userRoleAssign = userService.getUserRoleAssignByUserId(user.getId());
@@ -55,7 +46,6 @@ public class PortalLoginService {
                             UserRole role = userService.getRoleById(userRoleAssign.getRoleId());
                             appContext.setRole(role);
                             appContext.setName(user.getName());
-                            webUser.setIsFirstLogin(user.getIsFirstLogin());
                         } else {
                             status = LoginStatus.ACCOUNT_EXPIRED;
                         }
@@ -78,11 +68,11 @@ public class PortalLoginService {
                 AppContext.createVirtualContext("unknown",false, request);
                 status = LoginStatus.ACCOUNT_NOT_EXIST;
                 UnknownLoginHistory unHistory = new UnknownLoginHistory();
-                if (webUser.getId().length() > 32) {
-                    webUser.setId(webUser.getId().substring(0, 32));
+                if (username.length() > 32) {
+                    username = username.substring(0, 32);
                 }
                 Date now = new Date();
-                unHistory.setUserId(webUser.getId());
+                unHistory.setUserId(username);
                 unHistory.setIpAddress(SessionManager.getIpAddress(request));
                 unHistory.setLoginAt(now);
                 unHistory.setBrowser(request.getParameter("browser"));
@@ -152,22 +142,16 @@ public class PortalLoginService {
         }
     }
 
-    public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userid", user.getId());
-        claims.put("name", user.getName());
-        claims.put("email", user.getEmail());
+    public String generateToken(User user) throws Exception {
         Date now = new Date();
-        JwtBuilder jwtBuilder = Jwts.builder()
-                .setClaims(claims)
-                .setId(UUID.randomUUID().toString())
-                .setIssuedAt(now)
-                .setSubject(user.getName())
-                .setIssuer("UNITY c.n.o")
-                .setExpiration(DateUtils.addMinutes(now, 60))
-                .signWith(SignatureAlgorithm.HS512,
-                        Base64.encodeBase64String(ConfigUtils.get("security.jwt.secretKey").getBytes(StandardCharsets.UTF_8)));
-        return jwtBuilder.compact();
+        return JWT.create().withClaim("userid", user.getId())
+                .withClaim("name", user.getName())
+                .withClaim("email", user.getEmail())
+                .withIssuedAt(now)
+                .withIssuer("UNITY co.Ltd.")
+                .withSubject(user.getName())
+                .withExpiresAt(DateUtils.addMinutes(now, 60))
+                .sign(Algorithm.ECDSA256(SecurityUtils.getEcPublicKey(), SecurityUtils.getEcPrivateKey()));
     }
 
 

@@ -1,5 +1,6 @@
 package org.legion.unity.admin.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -13,20 +14,20 @@ import org.legion.unity.common.base.Response;
 import org.legion.unity.common.base.SessionManager;
 import org.legion.unity.common.consts.AppConst;
 import org.legion.unity.common.utils.DateUtils;
-import org.legion.unity.common.utils.LogUtils;
+import org.legion.unity.common.utils.StringUtils;
 import org.legion.unity.common.validation.CommonValidator;
 import org.legion.unity.common.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-@Controller
+@Api(tags = {"门户登录控制器"})
+@RestController
 public class PortalLoginController {
 
     private final UserService userService;
@@ -42,37 +43,33 @@ public class PortalLoginController {
     }
 
 
-    @GetMapping("/ea/login")
-    public String getLoginPage() {
-        log.info(LogUtils.around("Enter login page"));
-        return "admin/login";
-    }
-
-    @ApiOperation(value = "登录验证", protocols = "http", httpMethod = "POST")
+    @ApiOperation(value = "登录验证", protocols = "http: application/json;charset=utf-8", httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "用户名"),
-            @ApiImplicitParam(name = "password", value = "密码")
+            @ApiImplicitParam(name = "username", value = "输入的用户名", required = true, paramType = "body"),
+            @ApiImplicitParam(name = "password", value = "输入的密码", required = true, paramType = "body")
     })
     @PostMapping("/ea/login")
-    @ResponseBody
-    public Response login(User webUser, HttpServletRequest request) throws Exception {
+    public Response login(@RequestBody Map<String, String> auth, HttpServletRequest request) throws Exception {
         Responder responder = Responder.ready();
-        List<ConstraintViolation> violations = CommonValidator.validate(webUser, null);
-        if (!violations.isEmpty()) {
-            responder.addValidations(violations);
+        String username = auth.get("username");
+        String password = auth.get("password");
+        if (StringUtils.isBlank(username)) {
+            responder.addError("username", "mandatory");
+        } else if (StringUtils.isBlank(password)) {
+            responder.addError("password", "mandatory");
         } else {
-            LoginStatus loginStatus = loginService.login(webUser, request);
+            LoginStatus loginStatus = loginService.login(username, password, request);
             if (loginStatus == LoginStatus.SUCCESS) {
                 AppContext context = AppContext.getAppContext(request);
                 context.setLoggedIn(true);
                 context.setSessionId(request.getSession().getId());
                 responder.addDataObject(0);
-                if (AppConst.YES.equals(webUser.getIsFirstLogin())) {
+                /*if (AppConst.YES.equals(webUser.getIsFirstLogin())) {
                     responder.addDataObject("FirstLogin");
                     context.setLoggedIn(false);
                     SessionManager.setAttribute(SESSION_KEY, webUser);
-                }
-                log.info("User [" + webUser.getId() + "] Login Successfully at "
+                }*/
+                log.info("User [" + username + "] Login Successfully at "
                         + DateUtils.getDateString(new Date(), DateUtils.FULL_STD_FORMAT_1));
             } else if (loginStatus == LoginStatus.ACCOUNT_EXPIRED) {
                 responder.addError("loginId", "账户已过期");
