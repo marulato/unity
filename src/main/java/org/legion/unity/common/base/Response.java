@@ -1,32 +1,40 @@
 package org.legion.unity.common.base;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class Response implements Serializable {
+@ApiModel(value = "全局统一返回值")
+public class Response <T> implements Serializable {
 
-    private int status;
-    private Object data;
+    @ApiModelProperty(value = "自定义响应状态码", required = true, example = "201")
+    private int statusCode;
+    @ApiModelProperty(value = "响应数据")
+    private T data;
+    @ApiModelProperty(value = "请求时间", example = "2020-01-01 08:17:23:175")
     private Date requestAt;
+    @ApiModelProperty(value = "响应时间", example = "2020-01-01 08:17:23:504")
     private Date respondAt;
 
-    Response() {
-        requestAt = new Date();
+    public Response () {
+
     }
 
-    public int getStatus() {
-        return status;
+    public int getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
