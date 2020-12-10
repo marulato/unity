@@ -7,7 +7,6 @@ import org.legion.unity.admin.entity.LoginStatus;
 import org.legion.unity.admin.service.PortalLoginService;
 import org.legion.unity.admin.service.UserService;
 import org.legion.unity.common.base.AppContext;
-import org.legion.unity.common.base.Response;
 import org.legion.unity.common.base.ValidationResult;
 import org.legion.unity.common.utils.DateUtils;
 import org.legion.unity.common.utils.StringUtils;
@@ -37,43 +36,35 @@ public class PortalLoginController {
 
 
     @ApiOperation(value = "登录验证", protocols = "application/json",
-            httpMethod = "POST", response = Response.class, produces = MediaType.APPLICATION_JSON_VALUE)
+            httpMethod = "POST", response = ValidationResult.class, produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/ea/login")
-    public Response<ValidationResult> login(@RequestBody UserDTO user, HttpServletRequest request) throws Exception {
-        Response<ValidationResult> res = new Response<>();
-        ValidationResult vr = new ValidationResult();
-        res.setData(vr);
+    public ValidationResult login(@RequestBody UserDTO user, HttpServletRequest request) throws Exception {
+        ValidationResult res = new ValidationResult();
         String username = user.getUsername();
         String password = user.getPassword();
         if (StringUtils.isBlank(username)) {
-            vr.addFailedField("username", "mandatory");
+            res.addFailedField("username", "mandatory");
         } else if (StringUtils.isBlank(password)) {
-            vr.addFailedField("password", "mandatory");
+            res.addFailedField("password", "mandatory");
         } else {
             LoginStatus loginStatus = loginService.login(username, password, request);
             if (loginStatus == LoginStatus.SUCCESS) {
                 AppContext context = AppContext.getAppContext(request);
                 context.setLoggedIn(true);
                 context.setSessionId(request.getSession().getId());
-
-                /*if (AppConst.YES.equals(webUser.getIsFirstLogin())) {
-                    responder.addDataObject("FirstLogin");
-                    context.setLoggedIn(false);
-                    SessionManager.setAttribute(SESSION_KEY, webUser);
-                }*/
                 log.info("User [" + username + "] Login Successfully at "
                         + DateUtils.getDateString(new Date(), DateUtils.FULL_STD_FORMAT_1));
             } else if (loginStatus == LoginStatus.ACCOUNT_EXPIRED) {
-                vr.addFailedField("loginId", "账户已过期");
+                res.addFailedField("loginId", "账户已过期");
             } else if (loginStatus == LoginStatus.ACCOUNT_LOCKED) {
-                vr.addFailedField("loginId", "账户已锁定");
+                res.addFailedField("loginId", "账户已锁定");
             } else if (loginStatus == LoginStatus.ACCOUNT_INACTIVE) {
-                vr.addFailedField("loginId", "账户尚未启用");
+                res.addFailedField("loginId", "账户尚未启用");
             } else if (loginStatus == LoginStatus.ACCOUNT_FROZEN) {
-                vr.addFailedField("loginId", "账户已冻结");
+                res.addFailedField("loginId", "账户已冻结");
             } else {
-                vr.addFailedField("loginId", "用户名或密码不正确");
-                vr.addFailedField("password", "用户名或密码不正确");
+                res.addFailedField("loginId", "用户名或密码不正确");
+                res.addFailedField("password", "用户名或密码不正确");
             }
         }
         return res;

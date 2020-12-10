@@ -12,8 +12,10 @@ import java.util.Map;
 @ApiModel
 public class ValidationResult implements Serializable {
 
+    private int validationCode;
     @ApiModelProperty(value = "接口验证返回值，key(字段名): value(具体错误信息)", dataType = "map")
     private Map<String, String> map;
+    private String message;
 
     public ValidationResult() {
         map = new HashMap<>();
@@ -37,5 +39,21 @@ public class ValidationResult implements Serializable {
 
     public void setMap(Map<String, String> map) {
         this.map = map;
+    }
+
+    public int getValidationCode() {
+        return validationCode;
+    }
+
+    public void setValidationCode(int validationCode) {
+        this.validationCode = validationCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
